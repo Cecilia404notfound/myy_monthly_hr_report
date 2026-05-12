@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>集团人事月报（3月）</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{--bg:#f6f8fb;--panel:#ffffff;--text:#1f2937;--muted:#6b7280;--blue:#3b82f6;--red:#ef4444;--green:#10b981;--amber:#f59e0b;--border:#e5e7eb;--shadow:0 8px 24px rgba(15,23,42,.06)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1420px;margin:0 auto;padding:28px}
+    .hero,.card{background:var(--panel);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow)}
+    .hero{padding:28px}
+    h1{margin:0;font-size:34px;line-height:1.2}
+    .sub{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.8;max-width:980px}
+    .tags,.tabs{display:flex;flex-wrap:wrap;gap:10px}
+    .tags{margin-top:16px}
+    .tag{background:#eff6ff;border:1px solid #dbeafe;color:#1d4ed8;padding:8px 12px;border-radius:999px;font-size:12px}
+    .hero-core{margin-top:18px}
+    .core-inline{margin-top:14px;color:var(--text);font-size:15px;line-height:1.9}
+    .core-inline .head{font-weight:700}
+    .core-inline .item{padding-left:14px;position:relative}
+    .core-inline .item:before{content:"•";position:absolute;left:0;top:0;color:#111827}
+    .core-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .core-card{background:#f8fafc;border:1px solid var(--border);border-radius:16px;padding:14px}
+    .core-card .k{font-size:12px;color:var(--muted);font-weight:700}
+    .core-card .v{font-size:14px;line-height:1.8;color:var(--text);margin-top:8px}
+    .grid-kpi{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:20px}
+    .kpi{padding:18px}
+    .label{font-size:13px;color:var(--muted)}
+    .value{font-size:34px;font-weight:800;margin-top:8px}
+    .sub2{font-size:13px;color:var(--muted);margin-top:8px}
+    .up{color:var(--green)}
+    .risk{color:var(--red)}
+    .warn{margin-top:18px;background:#fef2f2;border:1px solid #fecaca;border-radius:18px;padding:18px 20px}
+    .warn h3{margin:0 0 10px 0;font-size:16px;color:#b91c1c}
+    .warn-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;color:#991b1b;font-size:14px}
+    .tabs{margin-top:22px}
+    .tab-btn{background:#f3f4f6;border:1px solid var(--border);color:#374151;border-radius:12px;padding:10px 14px;cursor:pointer;font-size:14px}
+    .tab-btn.active{background:#111827;color:#fff;border-color:#111827}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+    .section{margin-top:22px}
+    .grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .chart-card{padding:20px}
+    .section-title{font-size:20px;font-weight:800;margin:0 0 6px}
+    .section-desc{color:var(--muted);font-size:13px;margin-bottom:14px}
+    .mini-stack{display:grid;gap:12px}
+    .mini{border:1px solid var(--border);background:#fafafa;border-radius:16px;padding:14px 16px}
+    .mini.red{background:#fef2f2;border-color:#fecaca}
+    .mini .t{color:var(--muted);font-size:12px}
+    .mini .v{font-size:28px;font-weight:800;margin-top:6px}
+    .insight{border:1px solid var(--border);background:#fafafa;border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.8;color:#374151;margin-top:12px}
+    .insight.red{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+    .ratio-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+    .ratio-box{background:#fafafa;border:1px solid var(--border);border-radius:14px;padding:14px}
+    .ratio-box .n{font-size:12px;color:var(--muted)}
+    .ratio-box .x{font-size:24px;font-weight:800;margin-top:6px}
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .detail-card{margin-top:14px;padding:14px;border:1px solid var(--border);border-radius:16px;background:#fcfcfc}
+    .detail-card h4{margin:0 0 10px 0;font-size:14px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:12px 10px;border-bottom:1px solid var(--border);font-size:14px;text-align:left}
+    th{color:#6b7280}
+    .note{margin-top:14px;padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:14px;color:#92400e;font-size:13px;line-height:1.7}
+    canvas{width:100%!important;height:320px!important}
+    @media (max-width:1200px){.grid-kpi{grid-template-columns:repeat(3,1fr)}.warn-list,.ratio-grid,.core-grid,.detail-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:860px){.grid-kpi,.grid-3,.grid-2,.warn-list,.ratio-grid,.core-grid,.detail-grid{grid-template-columns:1fr}.wrap{padding:16px}h1{font-size:28px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>集团人事月报（3月）</h1>
+      <div class="tags"><div class="tag">数据日期：2026-3-31</div></div>
+      <div class="core-inline">
+        <div class="head">核心结论：</div>
+        <div class="item">整体规模较年初减少 99 人，整体资源仍以收缩为主；收缩主要集中在天际平台、数字营销BG、直属区域/上海分公司，个别组织虽有小幅补位，但不改变整体压降方向。</div>
+        <div class="item">外包 92 人，占比 5.9%，为组织弹性和成本控制保留了基础空间。</div>
+        <div class="item">累计入职 50 人，重点落在直属区域/北京分公司、数字营销BG、OBU。</div>
+        <div class="item">累计转正 39 人，沉淀集中在数字营销BG，说明前期引才已开始转化。</div>
+      </div>
+    </div>
+    <div class="grid-kpi">
+      <div class="card kpi"><div class="label">在职总人数</div><div class="value">1,555</div><div class="sub2 up">结构性调整期</div></div>
+      <div class="card kpi"><div class="label">自营人数</div><div class="value">1,453</div><div class="sub2">占比 93.4%</div></div>
+      <div class="card kpi"><div class="label">外包人数</div><div class="value">92</div><div class="sub2">占比 5.9%</div></div>
+      <div class="card kpi"><div class="label">累计入职</div><div class="value">50</div><div class="sub2">自营 40 / 外包 10</div></div>
+      <div class="card kpi"><div class="label">累计转正</div><div class="value">39</div><div class="sub2">3月转正 10</div></div>
+      <div class="card kpi"><div class="label">被动离职占比</div><div class="value risk">82.5%</div><div class="sub2 risk">主动出清信号明显</div></div>
+    </div>
+    <div class="warn"><h3>本月重点预警</h3><div class="warn-list"><div>退出结构以被动离职为主，本月核心主题是组织出清而非自然流动。</div><div>HC 缺口仍集中在数字营销BG、直属区域/北京分公司、直属区域/广州分公司，重点业务单元仍有补位压力。</div><div>已明确释放与待落地释放并存，4 月执行节奏将直接影响下月组织结构稳定性。</div></div></div>
+    <div class="tabs"><button class="tab-btn active" data-tab="overview">总览驾驶舱</button><button class="tab-btn" data-tab="structure">结构分析</button><button class="tab-btn" data-tab="flow">流动与质量</button><button class="tab-btn" data-tab="hireprob">入职 / 转正占比</button><button class="tab-btn" data-tab="cadre">干部概览</button><button class="tab-btn" data-tab="model">数据说明</button></div>
+    <div id="overview" class="tab-panel active">
+      <div class="section">
+        <div class="grid-3">
+          <div class="card chart-card">
+            <div class="section-title">人员流动趋势</div>
+            <div class="section-desc">入职按 1-3 月月度数据展示；离职与净增当前表内仅可直接获取 3 月值。</div>
+            <canvas id="flowTrendChart"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">组织动作信号</div>
+            <div class="section-desc">高层摘要。</div>
+            <div class="mini-stack">
+              <div class="mini red"><div class="t">释放人数（已明确）</div><div class="v">109</div></div>
+              <div class="mini"><div class="t">新增 / 预留 HC（已披露）</div><div class="v">27</div></div>
+              <div class="mini"><div class="t">干部调动</div><div class="v">32</div></div>
+              <div class="mini red"><div class="t">干部免职</div><div class="v">8</div></div>
+            </div>
+            <div class="insight" id="ai-headcount">当前不是单纯扩张或收缩，而是“结构性重配”。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="structure" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">直属区域外包占比</div>
+            <div class="section-desc">当前图表展示外包口径，外包是灵活用工的重要组成，可作为结构弹性的核心观察点。</div>
+            <canvas id="outsourceChart"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">核心结构结论</div>
+            <div class="section-desc">自动结论区，采用管理层视角的简短判断。</div>
+            <div class="insight" id="ai-flex">外包 92 人，占比 5.9%。一级/二级组织上，配置较高的是直属区域/北京分公司 14.5%、直属区域/广州分公司 10.4%、直属区域/深圳分公司 7.7%，有助于降低固定成本、提升组织抗风险能力。</div>
+            <div class="insight">公司总盘子较年初下降 6.0%，收缩集中在天际平台、数字营销BG、直属区域/上海分公司，说明资源正在从非核心或待调整单元撤出。</div>
+            <div class="insight">投建营由区域承接为主，数字营销由 BG 主导，两条业务链当前采用不同经营组织模式，后续应分别校验效率与人效。</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">投建营端到端：BG vs 区域人员占比</div>
+            <div class="section-desc">口径：投建营端到端总人数 = 投建营BG + 各直属区域投建营事业部。</div>
+            <canvas id="tobEndToEndChart"></canvas>
+            <div class="ratio-grid">
+              <div class="ratio-box"><div class="n">投建营BG</div><div class="x">45.9%</div></div>
+              <div class="ratio-box"><div class="n">区域投建营</div><div class="x">54.1%</div></div>
+              <div class="ratio-box"><div class="n">总人数</div><div class="x">656</div></div>
+              <div class="ratio-box"><div class="n">结构判断</div><div class="x">区域承接</div></div>
+            </div>
+            <div class="insight">投建营更多压在区域承接端，说明当前交付和业务落地的组织责任主要在区域。</div>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">数字营销端到端：BG vs 区域人员占比</div>
+            <div class="section-desc">口径：数字营销端到端总人数 = 数字营销BG + 各直属区域数字营销事业部。</div>
+            <canvas id="dmEndToEndChart"></canvas>
+            <div class="ratio-grid">
+              <div class="ratio-box"><div class="n">数字营销BG</div><div class="x">75.4%</div></div>
+              <div class="ratio-box"><div class="n">区域数字营销</div><div class="x">24.6%</div></div>
+              <div class="ratio-box"><div class="n">总人数</div><div class="x">566</div></div>
+              <div class="ratio-box"><div class="n">结构判断</div><div class="x">BG 主导</div></div>
+            </div>
+            <div class="insight red">数字营销明显由 BG 主导，区域侧承接较轻，后续需结合区域拓展策略校准资源下沉节奏。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="flow" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">离职结构</div>
+            <div class="section-desc">主动 vs 被动离职。</div>
+            <canvas id="exitChart"></canvas>
+            <div class="insight">主动离职 7 人、被动离职 33 人，本月退出主要来自组织优化而非核心人才自然流失。</div>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">流动与质量判断</div>
+            <div class="section-desc">本月先看退出质量和试用期沉淀情况。</div>
+            <div class="ratio-grid">
+              <div class="ratio-box"><div class="n">主动离职</div><div class="x">7</div></div>
+              <div class="ratio-box"><div class="n">被动离职</div><div class="x">33</div></div>
+              <div class="ratio-box"><div class="n">累计转正</div><div class="x">39</div></div>
+              <div class="ratio-box"><div class="n">试用淘汰</div><div class="x">1</div></div>
+            </div>
+            <div class="insight">试用淘汰仅 1 人，整体试用质量稳定；转正沉淀已开始向数字营销BG集中，前期引才在该业务单元落地较快。</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="card chart-card">
+          <div class="section-title">释放进展重点组织</div>
+          <div class="section-desc">展示仍在影响后续组织结构的重点单元。</div>
+          <table>
+            <thead><tr><th>一级组织</th><th>二级组织</th><th>在职自营</th><th>已释放</th><th>待释放</th><th>4月排期</th></tr></thead>
+            <tbody>
+              <tr><td>数字营销BG</td><td>/</td><td>415</td><td>32</td><td>13</td><td>13</td></tr>
+              <tr><td>投建营BG</td><td>/</td><td>298</td><td>9</td><td>43</td><td>36</td></tr>
+              <tr><td>天际平台</td><td>/</td><td>78</td><td>40</td><td>0</td><td>0</td></tr>
+              <tr><td>集团公共组织</td><td>/</td><td>92</td><td>1</td><td>13</td><td>7</td></tr>
+              <tr><td>直属区域</td><td>上海分公司</td><td>116</td><td>13</td><td>5</td><td>5</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="hireprob" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">入职人员所属组织占比</div>
+            <div class="section-desc">口径：2026/01/01 至 03/31 累计入职 50 人。</div>
+            <canvas id="hireOrgChart"></canvas>
+            <div class="ratio-grid"><div class="ratio-box"><div class="n">直属区域 / 北京分公司</div><div class="x">26.0%</div></div><div class="ratio-box"><div class="n">数字营销BG</div><div class="x">26.0%</div></div><div class="ratio-box"><div class="n">OBU</div><div class="x">22.0%</div></div><div class="ratio-box"><div class="n">其余组织合计</div><div class="x">26.0%</div></div></div>
+            <div class="insight">入职主要集中在直属区域/北京分公司、数字营销BG、OBU，说明本期新增人力主要投向一线承接和增长单元。</div>
+            <div class="detail-card">
+              <h4>入职组织下钻</h4>
+              <table>
+                <thead><tr><th>一级组织</th><th>二级组织</th><th>人数</th><th>占比</th></tr></thead>
+                <tbody>
+                  <tr><td>直属区域</td><td>北京分公司</td><td>13</td><td>26.0%</td></tr>
+                  <tr><td>数字营销BG</td><td>/</td><td>13</td><td>26.0%</td></tr>
+                  <tr><td>OBU</td><td>/</td><td>11</td><td>22.0%</td></tr>
+                  <tr><td>直属区域</td><td>上海分公司</td><td>4</td><td>8.0%</td></tr>
+                  <tr><td>直属区域</td><td>广州分公司</td><td>2</td><td>4.0%</td></tr>
+                  <tr><td>直属区域</td><td>深圳分公司</td><td>2</td><td>4.0%</td></tr>
+                  <tr><td>直属区域</td><td>粤北分公司</td><td>2</td><td>4.0%</td></tr>
+                  <tr><td>集团公共组织</td><td>/</td><td>2</td><td>4.0%</td></tr>
+                  <tr><td>天际平台</td><td>/</td><td>1</td><td>2.0%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">入职人员岗位分类占比（自营口径）</div>
+            <div class="section-desc">口径：累计自营入职 40 人；当前表内可直接取到岗位族分布合计。</div>
+            <canvas id="hireJobChart"></canvas>
+            <div class="insight red">当前新增自营人员以营销族为主，说明引才更偏业务拉动；技术、顾问序列同步补位，但整体规模仍小于业务侧岗位。</div>
+            <div class="detail-card">
+              <h4>入职组织 × 岗位矩阵</h4>
+              <table>
+                <thead><tr><th>组织</th><th>顾问族</th><th>技术族</th><th>营销族</th><th>职能族</th><th>产品族</th><th>组织合计</th></tr></thead>
+                <tbody>
+                  <tr><td>OBU</td><td>0</td><td>0</td><td>3</td><td>1</td><td>0</td><td>4</td></tr>
+                  <tr><td>直属区域 / 北京分公司</td><td>4</td><td>0</td><td>3</td><td>0</td><td>0</td><td>7</td></tr>
+                  <tr><td>直属区域 / 上海分公司</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+                  <tr><td>直属区域 / 广州分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 深圳分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 粤东分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 粤北分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>数字营销BG</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>2</td></tr>
+                  <tr><td>投建营BG</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>天际平台</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>集团公共组织</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+                  <tr><td>岗位合计</td><td>4</td><td>2</td><td>7</td><td>2</td><td>0</td><td>15</td></tr>
+                </tbody>
+              </table>
+              <div class="note">本矩阵按原始“入职人数（自营）”明细表汇总：有明确人数的岗位族显示数字，无人员落点的单元格显示 0。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">转正人员所属组织占比</div>
+            <div class="section-desc">口径：累计转正 39 人。</div>
+            <canvas id="probOrgChart"></canvas>
+            <div class="ratio-grid"><div class="ratio-box"><div class="n">数字营销BG</div><div class="x">61.5%</div></div><div class="ratio-box"><div class="n">OBU</div><div class="x">15.4%</div></div><div class="ratio-box"><div class="n">直属区域合计</div><div class="x">20.5%</div></div><div class="ratio-box"><div class="n">集团公共组织</div><div class="x">2.6%</div></div></div>
+            <div class="insight">转正高度集中在数字营销BG，说明该组织前期招聘动作较强，且人员留存转化较快。</div>
+            <div class="detail-card">
+              <h4>转正组织下钻</h4>
+              <table>
+                <thead><tr><th>一级组织</th><th>二级组织</th><th>人数</th><th>占比</th></tr></thead>
+                <tbody>
+                  <tr><td>数字营销BG</td><td>/</td><td>24</td><td>61.5%</td></tr>
+                  <tr><td>OBU</td><td>/</td><td>6</td><td>15.4%</td></tr>
+                  <tr><td>直属区域</td><td>深圳分公司</td><td>3</td><td>7.7%</td></tr>
+                  <tr><td>直属区域</td><td>广州分公司</td><td>2</td><td>5.1%</td></tr>
+                  <tr><td>直属区域</td><td>粤东分公司</td><td>2</td><td>5.1%</td></tr>
+                  <tr><td>直属区域</td><td>北京分公司</td><td>1</td><td>2.6%</td></tr>
+                  <tr><td>集团公共组织</td><td>/</td><td>1</td><td>2.6%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">转正人员岗位分类占比</div>
+            <div class="section-desc">口径：基于当月转正岗位明细 10 人。</div>
+            <canvas id="probFamilyChart"></canvas>
+            <div class="insight">转正岗位族以技术族为主，说明当前沉淀更集中在交付与技术序列；营销、顾问序列也已开始形成留存。</div>
+            <div class="detail-card">
+              <h4>转正组织 × 岗位矩阵</h4>
+              <table>
+                <thead><tr><th>组织</th><th>顾问族</th><th>技术族</th><th>营销族</th><th>职能族</th><th>管理序列</th><th>组织合计</th></tr></thead>
+                <tbody>
+                  <tr><td>OBU</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+                  <tr><td>直属区域 / 北京分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 上海分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 广州分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 深圳分公司</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>2</td></tr>
+                  <tr><td>直属区域 / 粤东分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>直属区域 / 粤北分公司</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>数字营销BG</td><td>0</td><td>5</td><td>0</td><td>1</td><td>1</td><td>7</td></tr>
+                  <tr><td>投建营BG</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>天际平台</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>集团公共组织</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                  <tr><td>岗位合计</td><td>1</td><td>5</td><td>2</td><td>1</td><td>1</td><td>10</td></tr>
+                </tbody>
+              </table>
+              <div class="note">本矩阵按原始“转正岗位详情”明细表汇总：有明确人数的岗位族显示数字，无人员落点的单元格显示 0。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="cadre" class="tab-panel">
+      <div class="section">
+        <div class="grid-2">
+          <div class="card chart-card">
+            <div class="section-title">干部动作概况</div>
+            <div class="section-desc">口径按干部流动动作次数统计。</div>
+            <canvas id="cadreChart"></canvas>
+            <div class="ratio-grid">
+              <div class="ratio-box"><div class="n">新任</div><div class="x">4</div></div>
+              <div class="ratio-box"><div class="n">调动</div><div class="x">32</div></div>
+              <div class="ratio-box"><div class="n">晋升</div><div class="x">14</div></div>
+              <div class="ratio-box"><div class="n">免职</div><div class="x">8</div></div>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <div class="section-title">干部概览判断</div>
+            <div class="section-desc">更适合管理层直接使用的动作含义。</div>
+            <div class="insight">干部动作合计 71 次，其中调动和晋升占主导，说明管理队伍正在围绕组织重配进行再配置，而非单纯扩编。</div>
+            <div class="insight">免职 8 次、离任 12 次，意味着组织调整已触及干部层，后续要重点关注关键岗位继任和团队稳定。</div>
+            <div class="insight">新任仅 4 次，当前干部策略偏内部盘活和重组，不是外部大规模引入。</div>
+            <div class="detail-card">
+              <h4>干部动作明细</h4>
+              <table>
+                <thead><tr><th>动作</th><th>人数</th><th>管理含义</th></tr></thead>
+                <tbody>
+                  <tr><td>新任</td><td>4</td><td>补位有限，外部新增较克制。</td></tr>
+                  <tr><td>调动</td><td>32</td><td>干部资源重配是本期主动作。</td></tr>
+                  <tr><td>晋升</td><td>14</td><td>组织调整中仍保留内部激励。</td></tr>
+                  <tr><td>降职</td><td>1</td><td>个别岗位做管理回调。</td></tr>
+                  <tr><td>免职</td><td>8</td><td>组织重组触及管理岗位。</td></tr>
+                  <tr><td>离任</td><td>12</td><td>需同步观察继任与团队波动。</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="model" class="tab-panel">
+      <div class="section">
+        <div class="card chart-card">
+          <div class="section-title">本次新增模块的数据说明</div>
+          <div class="section-desc">确保图表口径与你当前 SSC 表一致。</div>
+          <table>
+            <thead><tr><th>模块</th><th>数据来源</th><th>当前状态</th></tr></thead>
+            <tbody>
+              <tr><td>入职组织下钻</td><td>《三、人员动态-入职情况》累计合计</td><td>已完成</td></tr>
+              <tr><td>入职岗位族下钻</td><td>《三、人员动态-入职情况》累计自营入职岗位族</td><td>已完成</td></tr>
+              <tr><td>转正组织下钻</td><td>《四、人员动态-试用期情况》累计转正</td><td>已完成</td></tr>
+              <tr><td>转正岗位族下钻</td><td>《四、人员动态-试用期情况》转正岗位族明细</td><td>已完成</td></tr>
+              <tr><td>人员释放进展</td><td>《一、人员数据监控（人员释放进展）》</td><td>已完成</td></tr>
+              <tr><td>干部概览</td><td>《八、干部流动》</td><td>已完成</td></tr>
+            </tbody>
+          </table>
+          <div class="note">当前灵活用工图表展示的是外包口径；如后续将实习生并入口径，即可升级为完整的灵活用工分析。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script id="aiFactsJson" type="application/json">{
+  "report_date": "2026-03-31",
+  "total_headcount": 1555,
+  "start_headcount": 1654,
+  "headcount_delta": -99,
+  "headcount_delta_rate": -0.0599,
+  "self_operated": 1453,
+  "outsource": 92,
+  "outsource_ratio": 0.0592,
+  "biggest_drop": [
+    {
+      "org": "天际平台",
+      "parent": "天际平台",
+      "start_total": 130,
+      "current_total": 83,
+      "self_operated": 78,
+      "self_rate": 0.9397590361445783,
+      "outsource": 5,
+      "outsource_rate": 0.060240963855421686,
+      "other": 0,
+      "other_rate": 0.0,
+      "delta": -47
+    },
+    {
+      "org": "数字营销BG",
+      "parent": "数字营销BG",
+      "start_total": 451,
+      "current_total": 427,
+      "self_operated": 415,
+      "self_rate": 0.9718969555035128,
+      "outsource": 12,
+      "outsource_rate": 0.02810304449648712,
+      "other": 0,
+      "other_rate": 0.0,
+      "delta": -24
+    },
+    {
+      "org": "上海分公司",
+      "parent": "",
+      "start_total": 144,
+      "current_total": 124,
+      "self_operated": 116,
+      "self_rate": 0.9354838709677419,
+      "outsource": 7,
+      "outsource_rate": 0.056451612903225805,
+      "other": 1,
+      "other_rate": 0.008064516129032258,
+      "delta": -20
+    }
+  ],
+  "biggest_increase": [
+    {
+      "org": "投建营BG",
+      "parent": "投建营BG",
+      "start_total": 281,
+      "current_total": 301,
+      "self_operated": 298,
+      "self_rate": 0.9900332225913622,
+      "outsource": 3,
+      "outsource_rate": 0.009966777408637873,
+      "other": 0,
+      "other_rate": 0.0,
+      "delta": 20
+    },
+    {
+      "org": "OBU",
+      "parent": "OBU",
+      "start_total": 73,
+      "current_total": 76,
+      "self_operated": 74,
+      "self_rate": 0.9736842105263158,
+      "outsource": 2,
+      "outsource_rate": 0.02631578947368421,
+      "other": 0,
+      "other_rate": 0.0,
+      "delta": 3
+    },
+    {
+      "org": "集团公共组织",
+      "parent": "集团公共组织",
+      "start_total": 115,
+      "current_total": 117,
+      "self_operated": 92,
+      "self_rate": 0.7863247863247863,
+      "outsource": 18,
+      "outsource_rate": 0.15384615384615385,
+      "other": 7,
+      "other_rate": 0.05982905982905983,
+      "delta": 2
+    }
+  ],
+  "high_outsource_regions": [
+    {
+      "org": "北京分公司",
+      "parent": "直属区域",
+      "start_total": 169,
+      "start_outsource": 22,
+      "current_total": 159,
+      "current_outsource": 23,
+      "consulting": 18,
+      "technology": 1,
+      "product": 0,
+      "function": 4,
+      "current_ratio": 0.14465408805031446
+    },
+    {
+      "org": "广州分公司",
+      "parent": "",
+      "start_total": 129,
+      "start_outsource": 15,
+      "current_total": 115,
+      "current_outsource": 12,
+      "consulting": 8,
+      "technology": 2,
+      "product": 0,
+      "function": 2,
+      "current_ratio": 0.10434782608695652
+    },
+    {
+      "org": "深圳分公司",
+      "parent": "",
+      "start_total": 139,
+      "start_outsource": 14,
+      "current_total": 130,
+      "current_outsource": 10,
+      "consulting": 9,
+      "technology": 1,
+      "product": 0,
+      "function": 0,
+      "current_ratio": 0.07692307692307693
+    }
+  ],
+  "hc_gap_total": 27,
+  "top_hc_gap_orgs": [
+    {
+      "org": "数字营销BG",
+      "current_total": 427,
+      "self_operated": 415,
+      "self_rate": 0.9718969555035128,
+      "hc": 440,
+      "gap": 25,
+      "progress": 0.9431818181818182
+    },
+    {
+      "org": "北京分公司",
+      "current_total": 159,
+      "self_operated": 135,
+      "self_rate": 0.8490566037735849,
+      "hc": 151,
+      "gap": 16,
+      "progress": 0.8940397350993378
+    },
+    {
+      "org": "广州分公司",
+      "current_total": 115,
+      "self_operated": 102,
+      "self_rate": 0.8869565217391304,
+      "hc": 117,
+      "gap": 15,
+      "progress": 0.8717948717948718
+    }
+  ],
+  "release_remaining": 83,
+  "release_apr_plan": 68,
+  "release_rows": [
+    {
+      "org": "OBU",
+      "self_operated": 74,
+      "actual_release": 2,
+      "remaining_plan": 0,
+      "apr_planned": 0,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "北京分公司",
+      "self_operated": 135,
+      "actual_release": 7,
+      "remaining_plan": 1,
+      "apr_planned": 1,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "上海分公司",
+      "self_operated": 116,
+      "actual_release": 13,
+      "remaining_plan": 5,
+      "apr_planned": 5,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "广州分公司",
+      "self_operated": 102,
+      "actual_release": 1,
+      "remaining_plan": 0,
+      "apr_planned": 0,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "深圳分公司",
+      "self_operated": 120,
+      "actual_release": 3,
+      "remaining_plan": 8,
+      "apr_planned": 6,
+      "apr_actual": 0,
+      "may_planned": 1,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "粤东分公司",
+      "self_operated": 12,
+      "actual_release": 1,
+      "remaining_plan": 0,
+      "apr_planned": 0,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "粤北分公司",
+      "self_operated": 11,
+      "actual_release": 0,
+      "remaining_plan": 0,
+      "apr_planned": 0,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "数字营销BG",
+      "self_operated": 415,
+      "actual_release": 32,
+      "remaining_plan": 13,
+      "apr_planned": 13,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "投建营BG",
+      "self_operated": 298,
+      "actual_release": 9,
+      "remaining_plan": 43,
+      "apr_planned": 36,
+      "apr_actual": 0,
+      "may_planned": 1,
+      "may_actual": 0,
+      "jun_planned": 6
+    },
+    {
+      "org": "天际平台",
+      "self_operated": 78,
+      "actual_release": 40,
+      "remaining_plan": 0,
+      "apr_planned": 0,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 0
+    },
+    {
+      "org": "集团公共组织",
+      "self_operated": 92,
+      "actual_release": 1,
+      "remaining_plan": 13,
+      "apr_planned": 7,
+      "apr_actual": 0,
+      "may_planned": 0,
+      "may_actual": 0,
+      "jun_planned": 4
+    }
+  ],
+  "exit_active": 7,
+  "exit_passive": 33,
+  "exit_passive_rate": 0.825,
+  "digital_bg_ratio": 0.7544,
+  "digital_bg_count": 427,
+  "digital_region_count": 139,
+  "tob_bg_ratio": 0.4588,
+  "tob_region_ratio": 0.5412,
+  "tob_bg_count": 301,
+  "tob_region_count": 355,
+  "company_consulting_ratio": 0.2544,
+  "tob_consulting_ratio": 0.4126,
+  "company_technology_ratio": 0.4147,
+  "digital_technology_ratio": 0.4906,
+  "cadre_move": 32,
+  "cadre_remove": 8,
+  "hire_ytd_total": 50,
+  "probation_ytd_total": 39,
+  "warnings_from_rules": [
+    "被动离职占比 82.5%，本期离职更接近主动组织调整。",
+    "自营 HC 口径仍有 27 人缺口，主要集中在 数字营销BG25、北京分公司16、广州分公司15。",
+    "组织释放仍有 83 人待落地，4 月已披露计划 68 人。"
+  ],
+  "previous_report_date": null,
+  "headcount_vs_previous": null,
+  "outsource_ratio_vs_previous": null,
+  "digital_bg_ratio_vs_previous": null,
+  "tob_bg_ratio_vs_previous": null
+}</script>
+  <script>
+    const reportData = {"flow_labels": ["1月", "2月", "3月"], "flow_hire": [20, 12, 18], "flow_exit": [null, null, 40], "flow_net": [null, null, -22], "outsource_labels": ["直属区域/北京分公司", "直属区域/广州分公司", "直属区域/深圳分公司", "直属区域/上海分公司", "直属区域/粤东分公司", "直属区域/粤北分公司"], "outsource_values": [14.5, 10.4, 7.7, 5.6, 0.0, 0.0], "exit_values": [7, 33], "hire_org_labels": ["OBU", "直属区域/北京分公司", "直属区域/上海分公司", "直属区域/广州分公司", "直属区域/深圳分公司", "直属区域/粤北分公司", "数字营销BG", "天际平台", "集团公共组织"], "hire_org_values": [11, 13, 4, 2, 2, 2, 13, 1, 2], "hire_job_labels": ["顾问族", "技术族", "营销族", "职能族", "产品族"], "hire_job_values": [4, 2, 7, 2, 0], "prob_org_labels": ["OBU", "直属区域/北京分公司", "直属区域/广州分公司", "直属区域/深圳分公司", "直属区域/粤东分公司", "数字营销BG", "集团公共组织"], "prob_org_values": [6, 1, 2, 3, 2, 24, 1], "prob_family_labels": ["顾问族", "技术族", "营销族", "职能族", "管理序列"], "prob_family_values": [1, 5, 2, 1, 1], "tob_values": [301, 355], "dm_values": [427, 139], "cadre_labels": ["新任", "调动", "晋升", "降职", "免职", "离任"], "cadre_values": [4, 32, 14, 1, 8, 12]};
+    document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');}));
+    const commonOptions={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#374151'}},tooltip:{backgroundColor:'#111827',borderColor:'rgba(255,255,255,.15)',borderWidth:1,titleColor:'#fff',bodyColor:'#f3f4f6'}},scales:{x:{ticks:{color:'#4b5563'},grid:{color:'#f1f5f9'}},y:{ticks:{color:'#4b5563'},grid:{color:'#f1f5f9'}}}};
+    const doughnutLegendBase=(Chart.overrides&&Chart.overrides.doughnut&&Chart.overrides.doughnut.plugins&&Chart.overrides.doughnut.plugins.legend&&Chart.overrides.doughnut.plugins.legend.labels&&Chart.overrides.doughnut.plugins.legend.labels.generateLabels)?Chart.overrides.doughnut.plugins.legend.labels.generateLabels:Chart.defaults.plugins.legend.labels.generateLabels;
+    const doughnutOptions={responsive:true,maintainAspectRatio:true,aspectRatio:1,cutout:'58%',plugins:{legend:{position:'bottom',labels:{color:'#374151',usePointStyle:true,boxWidth:10,padding:16,generateLabels(chart){const base=doughnutLegendBase(chart);const data=chart.data.datasets[0].data||[];const total=data.reduce((sum,value)=>sum+(Number(value)||0),0);return base.map((item,index)=>{const value=Number(data[index])||0;const share=total?` ${(value/total*100).toFixed(1)}%`:'';return {...item,text:`${chart.data.labels[index]}${share}`};});}}}}};
+    const createChart=(id,config)=>{const el=document.getElementById(id);if(el)new Chart(el,config);};
+    createChart('flowTrendChart',{type:'line',data:{labels:reportData.flow_labels,datasets:[{label:'入职',data:reportData.flow_hire,borderColor:'#3b82f6',backgroundColor:'#3b82f6',tension:.35,spanGaps:false},{label:'离职',data:reportData.flow_exit,borderColor:'#ef4444',backgroundColor:'#ef4444',tension:.35,spanGaps:false},{label:'净增',data:reportData.flow_net,borderColor:'#10b981',backgroundColor:'#10b981',tension:.35,spanGaps:false}]},options:commonOptions});
+    createChart('outsourceChart',{type:'bar',data:{labels:reportData.outsource_labels,datasets:[{label:'外包占比(%)',data:reportData.outsource_values,backgroundColor:'#f59e0b',borderRadius:10}]},options:commonOptions});
+    createChart('exitChart',{type:'doughnut',data:{labels:['主动离职','被动离职'],datasets:[{data:reportData.exit_values,backgroundColor:['#3b82f6','#ef4444'],borderWidth:0}]},options:doughnutOptions});
+    createChart('hireOrgChart',{type:'doughnut',data:{labels:reportData.hire_org_labels,datasets:[{data:reportData.hire_org_values,backgroundColor:['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#84cc16','#6366f1','#f97316'],borderWidth:0}]},options:doughnutOptions});
+    createChart('hireJobChart',{type:'bar',data:{labels:reportData.hire_job_labels,datasets:[{label:'自营入职人数',data:reportData.hire_job_values,backgroundColor:['#3b82f6','#10b981','#8b5cf6','#f59e0b','#d1d5db'],borderRadius:10}]},options:commonOptions});
+    createChart('probOrgChart',{type:'doughnut',data:{labels:reportData.prob_org_labels,datasets:[{data:reportData.prob_org_values,backgroundColor:['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#6366f1'],borderWidth:0}]},options:doughnutOptions});
+    createChart('probFamilyChart',{type:'bar',data:{labels:reportData.prob_family_labels,datasets:[{label:'转正人数',data:reportData.prob_family_values,backgroundColor:['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444'],borderRadius:10}]},options:commonOptions});
+    createChart('tobEndToEndChart',{type:'doughnut',data:{labels:['投建营BG','区域投建营'],datasets:[{data:reportData.tob_values,backgroundColor:['#3b82f6','#10b981'],borderWidth:0}]},options:doughnutOptions});
+    createChart('dmEndToEndChart',{type:'doughnut',data:{labels:['数字营销BG','区域数字营销'],datasets:[{data:reportData.dm_values,backgroundColor:['#8b5cf6','#f59e0b'],borderWidth:0}]},options:doughnutOptions});
+    createChart('cadreChart',{type:'bar',data:{labels:reportData.cadre_labels,datasets:[{label:'干部动作次数',data:reportData.cadre_values,backgroundColor:['#60a5fa','#2563eb','#10b981','#f59e0b','#ef4444','#7c3aed'],borderRadius:10}]},options:commonOptions});
+  </script>
+</body>
+</html>
